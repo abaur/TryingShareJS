@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <script src="http://ajaxorg.github.com/ace/build/src/ace.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/share/share.js"></script>
+    <script src="/share/ace.js"></script>
+    <script src="jquery-1.7.2.js"></script>
+    <script src="/share/json.js"></script>
+
+    <script>
+    toX = 0, toY = 0
+    sharejs.open('movingbox', 'json', function(error, doc) {
+    if (error) {
+      if (console) {
+        console.error(error);
+      }
+      return;
+    }
+    
+    if (doc.created) {
+      doc.set([""]);
+    }
+    
+    var trains = doc.get();
+    console.log(trains);
+    
+    doc.at().on('move', function(from, to) {
+      $("#draggable").css({'left' : to[0], 'top': to[1]})
+      
+    });    
+    
+    $("#draggable").draggable(
+      {
+        drag: function(event, ui){
+            offset = ui.position;
+            if(toX != offset.left || toY != offset.top)
+              doc.at().move(0, [offset.left, 
+                offset.top]);
+            toX = offset.left, toY = offset.left
+        }});
+    });
+  
+</script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+  <style type="text/css">
+    #draggable { width: 100px; height: 70px; background: silver; }
+  </style>
+  </head>
+  <body>
+<div id="draggable">Drag me</div>
+  </body>
+</html>
